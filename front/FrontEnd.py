@@ -31,7 +31,43 @@ class FrontEnd:
                 self.updateSong()
                 self.stdscr.touchwin()
                 self.stdscr.refresh()
-    
+            elif c == ord('l'):
+                self.changeSong()
+                self.updateSong()
+                self.stdscr.touchwin()
+                self.stdscr.refresh()
+
+    def createSongList(self):
+        changeWindow = curses.newwin(5, 40, 5, 50)
+        changeWindow.border()
+        changeWindow.addstr(0,0, "What are the song path?", curses.A_REVERSE)
+	self.stdscr.addstr(5,10, "q - Save & Quit")
+        while True:
+	    c = self.stdscr.getch()
+            if c == ord('q'):
+                self.quit()
+            elif c == ord('p'):
+                self.player.pause()
+            elif c == ord('c'):
+                self.changeSong()
+                self.updateSong()
+                self.stdscr.touchwin()
+                self.stdscr.refresh()
+            elif c == ord('l'):
+                self.changeSong()
+                self.updateSong()
+                self.stdscr.touchwin()
+                self.stdscr.refresh()
+        self.stdscr.refresh()
+        curses.echo()
+        path = changeWindow.getstr(1,1, 30)
+        curses.noecho()
+        del changeWindow
+        self.stdscr.touchwin()
+        self.stdscr.refresh()
+        self.player.stop()
+        self.player.play(path.decode(encoding="utf-8"))
+
     def updateSong(self):
         self.stdscr.addstr(15,10, "                                        ")
         self.stdscr.addstr(15,10, "Now playing: " + self.player.getCurrentSong())
