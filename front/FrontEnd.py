@@ -186,15 +186,14 @@ class FrontEnd:
                 #press the "x" key to close the warnning window
                 if d4 == ord('x'):
                     del listWindow
-                    self.stdscr.touchwin()
-                    self.stdscr.refresh()
                     for song in self.songList:
                        if self.player.paused is False:
                            self.player.stop()
                        self.player.play("library/" + song) 
                        self.updateSong()
-
                     
+                    self.stdscr.touchwin()
+                    self.stdscr.refresh()
     
 
 
