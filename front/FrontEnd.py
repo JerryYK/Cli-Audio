@@ -6,7 +6,7 @@ import os
 
 '''
  Enhance the cli-audio's feature
- Author: Runquan Ye
+ Author: Runquan Ye Alec Allain
 '''
 =======
 from exception.CLI_Audio_Exception import *
