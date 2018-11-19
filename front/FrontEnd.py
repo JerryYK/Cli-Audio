@@ -1,20 +1,36 @@
 import curses
 import curses.textpad
 import sys
+<<<<<<< HEAD
 import os
 
 '''
  Enhance the cli-audio's feature
  Author: Runquan Ye
 '''
+=======
+from exception.CLI_Audio_Exception import *
+>>>>>>> 2fe3c4b3dab7a00633b3db7e1be2b5ead61f847e
 
 class FrontEnd:
 
     def __init__(self, player):
+<<<<<<< HEAD
         self.player = player
       	#self.player.play(sys.argv[1])
         curses.wrapper(self.menu)
         self.playList = []
+=======
+        """ This checks for a window size error"""
+        try:
+            self.player = player
+            self.player.play(sys.argv[1])
+            curses.wrapper(self.menu)
+        except CLI_Audio_Screen_Size_Exception:
+            print("Window size is at a really small size")
+            print()
+            pass
+>>>>>>> 2fe3c4b3dab7a00633b3db7e1be2b5ead61f847e
 
     def menu(self, args):
         #getiing the height and width from the window itself
@@ -45,6 +61,7 @@ class FrontEnd:
                 self.updateSong()
                 self.stdscr.touchwin()
                 self.stdscr.refresh()
+<<<<<<< HEAD
             elif c == ord('l'):
                 self.createSongList()
 
@@ -92,14 +109,23 @@ class FrontEnd:
         self.player.stop()
         self.player.play(path.decode(encoding="utf-8"))
 
+=======
+    
+>>>>>>> 2fe3c4b3dab7a00633b3db7e1be2b5ead61f847e
     def updateSong(self):
         self.stdscr.addstr(15,10, "                                        ")
         self.stdscr.addstr(15,10, "Now playing: " + self.player.getCurrentSong())
 
     def changeSong(self):
-        changeWindow = curses.newwin(5, 40, 5, 50)
-        changeWindow.border()
-        changeWindow.addstr(0,0, "What is the file path?", curses.A_REVERSE)
+        """Method checks for executable path for music file"""
+        try:
+            changeWindow = curses.newwin(5, 40, 5, 50)
+            changeWindow.border()
+            changeWindow.addstr(0,0, "What is the file path?", curses.A_REVERSE)
+        except CLI_Audio_File_Exception:
+            print("There was no file path that linked up correctly")
+            pass
+        
         self.stdscr.refresh()
         curses.echo()
         path = changeWindow.getstr(1,1, 30)

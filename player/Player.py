@@ -4,6 +4,13 @@ import pyaudio
 import wave
 import time
 
+"""
+This class is the backend for the 
+cli-audio gui
+
+@author Jerry Ye
+@author Alec Allain
+"""
 class Player:
     def __init__(self):
         self.currentSong = "Nothing playing."
