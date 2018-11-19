@@ -3,7 +3,14 @@
 from front.FrontEnd import FrontEnd
 from player.Player import Player
 from curses import wrapper
+from exception.CLI_Audio_Exception import *
 
+"""
+This class is the main method
+
+@author Alec Allain
+@author Jerry Ye
+"""
 def main():
     player = Player()
     front_end = FrontEnd(player)
