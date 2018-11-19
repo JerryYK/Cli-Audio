@@ -1,47 +1,50 @@
 import curses
 import curses.textpad
-import sys
-<<<<<<< HEAD
-import os
+import sys, os
+from exceptions import File_Exception, WindowSize_Exception
 
 '''
  Enhance the cli-audio's feature
- Author: Runquan Ye
+ Author: Runquan Ye, Alec Allain
 '''
-=======
-from exception.CLI_Audio_Exception import *
->>>>>>> 2fe3c4b3dab7a00633b3db7e1be2b5ead61f847e
 
 class FrontEnd:
 
+
+
     def __init__(self, player):
-<<<<<<< HEAD
-        self.player = player
-      	#self.player.play(sys.argv[1])
-        curses.wrapper(self.menu)
-        self.playList = []
-=======
-        """ This checks for a window size error"""
+	#use the try except case for handling the window size error
         try:
             self.player = player
-            self.player.play(sys.argv[1])
+	    
+	    #create a veriable to hold the list
+            self.songList = os.listdir('library')
+
+            #remove the py file from the song list
+            if os.path.isfile("library/__init__.py"):
+                self.songList.remove('__init__.py')
+
+            #self.player.play(sys.argv[1])
             curses.wrapper(self.menu)
-        except CLI_Audio_Screen_Size_Exception:
-            print("Window size is at a really small size")
-            print()
-            pass
->>>>>>> 2fe3c4b3dab7a00633b3db7e1be2b5ead61f847e
+
+	#get the window size exception then print out the warnning massage 
+        except WindowSize_Exception:
+            print("--------------------------------Warnning!!!--------------------------------",
+                  "\n\tThe terminal size is too small to fit the Cli-Audio!"
+                  "\n\tThe suggest size is: H >= 20; W >= 95")
+
+
 
     def menu(self, args):
-        #getiing the height and width from the window itself
-        h, w = self.scr.getmaxyx()
-        
-        #check the h and w are they big enough
-        if(h < 30 or w < 30):
-            #throw the customer exception
-            raise exceptions.Size_exception
-
         self.stdscr = curses.initscr()
+
+	#get the window size
+        h , w = self.stdscr.getmaxyx()
+
+	#if the height and width are too small, raise the windowsize exception
+        if(h < 20 or w < 95):
+            raise WindowSize_Exception
+
         self.stdscr.border()
         self.stdscr.addstr(0,0, "cli-audio",curses.A_REVERSE)
         self.stdscr.addstr(5,10, "c - Change current song")
@@ -55,87 +58,177 @@ class FrontEnd:
             if c == 27:
                 self.quit()
             elif c == ord('p'):
-                self.player.pause()
+                #use the try except case to handle the play pause error
+                try:
+                    self.player.pause()
+
+                #get the file exception then print out the warnning massage 
+                except AttributeError:
+
+		    #I create a new window to display the warnning message
+                    warnningWindow = curses.newwin(5, 40, 5, 50)                    
+                    warnningWindow.border()
+                    warnningWindow.addstr(0,3, "Error")
+                    warnningWindow.addstr(1,15, "Warnning!!")
+                    warnningWindow.addstr(2,0, "There has no audio file is playing.")
+                    warnningWindow.addstr(3,0, "The play / pause does not work.")
+                    warnningWindow.addstr(4,0, "Press 'x' key to close warnning window!")
+                    warnningWindow.refresh()
+
+		    #set the key listener
+                    d1 = self.stdscr.getch()
+
+		    #press the "x" key to close the warnning window
+                    if d1 == ord('x'):
+                        del warnningWindow
+                        self.stdscr.touchwin()
+                        self.stdscr.refresh()
+
             elif c == ord('c'):
-                self.changeSong()
-                self.updateSong()
-                self.stdscr.touchwin()
-                self.stdscr.refresh()
-<<<<<<< HEAD
+		#use the try except case the handle the file exception
+                try:
+                    self.changeSong()
+                    self.updateSong()
+                    self.stdscr.touchwin()
+                    self.stdscr.refresh()
+
+		#get the file exception then print out the warnning massage 
+                except File_Exception:
+
+		    #I create a new window to display the warnning message
+                    warnningWindow = curses.newwin(5, 40, 5, 50)                    
+                    warnningWindow.border()
+                    warnningWindow.addstr(0,3, "Error")
+                    warnningWindow.addstr(1,15, "Warnning!!")
+                    warnningWindow.addstr(2,0, "The audio file does not exist in the file directory.")
+                    warnningWindow.addstr(3,0, "Press 'x' key to close warnning window!")
+                    warnningWindow.refresh()
+
+		    #set the key listener
+                    d = self.stdscr.getch()
+
+		    #press the "x" key to close the warnning window
+                    if d == ord('x'):
+                        del warnningWindow
+                        self.stdscr.touchwin()
+                        self.stdscr.refresh()
+
             elif c == ord('l'):
-                self.createSongList()
+               
+		#create a list window to display the library list
+                listWindow = curses.newwin(23, 55, 3, 42)                    
+                listWindow.border()
+                listWindow.addstr(0,3, "List")
+                listWindow.addstr(1,18, "Song List")
+                listWindow.addstr(2,1, "Here are the song in the 'library' forder: ")
+                listWindow.addstr(3,1, "The maximum display length is: 15 songs")
+                listWindow.addstr(4,1, "*Add: drop file into the 'library' forder and restar")
+                listWindow.addstr(5,1, "*Remove: press the 'r' key.")
+                listWindow.addstr(6,1, "*Exist: press the 'x' key.  Then the music plays")
+                listWindow.addstr(7,1, "-----------------------------------------------------")
+                
+		#declare a variable to keep track on the song row place into the list window
+                x = 0
+                for song in self.songList:
+                    if(x < 15):
+                        #add the song file into the songlist window
+                        listWindow.addstr(8+x ,1,song)
+                        x = x + 1
+                listWindow.refresh()
+ 
+                while True:
+                    #renew the key listener
+                    d3 = listWindow.getch()
+		    #press the "r" key to for removing the file
+                    if d3 == ord('r'):
+		        # create a window to ask the remove input
+                        removeWindow = curses.newwin(5, 40, 5, 50)                    
+                        removeWindow.border()
+                        removeWindow.addstr(0,3, "Remove")
+                        removeWindow.addstr(1,0, "Whoch Song name you want to remove?")
+                        removeWindow.refresh()
 
-    def createSongList(self):
-        listWindow = curses.newwin(5, 40, 5, 50)
-        listWindow.border()
-        listWindow.addstr(0, 0, "Create your favorite song list:")
+                        curses.echo()
+                        removeFile = removeWindow.getstr(2,1, 30)
+                        curses.noecho()
 
-        listWindow.addstr(1, 10, "a - Add")
-        listWindow.addstr(2, 10, "r - Remove")
-        listWindow.addstr(3, 10, "q - Quit")
-        listWindow.addstr(4, 0, "-----------------------------------------------------------")
-        listWindow.addstr(5, 0, "Your currennt playlist:")
-        if self.playList is not None:
-            for i in self.playList:                
-                 listWindow.addstr(self.playList.index(i) + 7, 10, i)
-        
-        while True:
-            c = self.stdscr.getch()
-            if c == ord('a'):
-                popWindow = curses.curses.newwin(8,40, 5, 50)
-                popWindow.border()
-                popWindow.addstr(0, 0, "What is the file path you want to add into the list?")    
-            #if c == ord('r'):
+		        #close the remove window
+                        del removeWindow
+                        listWindow.touchwin()
+                        listWindow.refresh()
 
-            if c == ord('q'):
-               curses.noecho()
-               del changeWindow
-               break;
+		        # remove the song from the list 
+                        if removeFile.decode(encoding="utf-8") in self.songList:
+                            self.songList.remove(removeFile.decode(encoding="utf-8"))
 
-        for i in self.playerList:      
-            self.changeSong()
-            self.updateSong()
-            self.stdscr.touchwin()
-            self.stdscr.refresh()
+		        #remove the song file from the directory
+                        if os.path.isfile("library/" + removeFile.decode(encoding="utf-8")):     
+                            os.remove("library/" + removeFile.decode(encoding="utf-8"))
+                    
+                        for r in range(x+1):
+                            if(x < 15):
+                                #add the song file into the songlist window
+                                listWindow.addstr(8+r, 1, "                        ")
+                        x = 0
+                        for song in self.songList:
+                            if(x < 15):
+                                #add the song file into the songlist window
+                                listWindow.addstr(8+x ,1,song)
+                                x = x + 1
+                	#update the window
+                        listWindow.refresh()
 
-         
-        self.stdscr.refresh()
-        curses.echo()
-        path = changeWindow.getstr(1,1, 30)
-        curses.noecho()
-        del changeWindow
-        self.stdscr.touchwin()
-        self.stdscr.refresh()
-        self.player.stop()
-        self.player.play(path.decode(encoding="utf-8"))
+                    #get out of the while loop
+                    if d3 == ord('x'):
+                        d4 = listWindow.getch()
+                        break
 
-=======
+                #press the "x" key to close the warnning window
+                if d4 == ord('x'):
+                    del listWindow
+                    self.stdscr.touchwin()
+                    self.stdscr.refresh()
+                    for song in self.songList:
+                       if self.player.paused is False:
+                           self.player.stop()
+                       self.player.play("library/" + song) 
+                       self.updateSong()
+
+                    
     
->>>>>>> 2fe3c4b3dab7a00633b3db7e1be2b5ead61f847e
+
+
     def updateSong(self):
         self.stdscr.addstr(15,10, "                                        ")
         self.stdscr.addstr(15,10, "Now playing: " + self.player.getCurrentSong())
 
+
+
     def changeSong(self):
-        """Method checks for executable path for music file"""
-        try:
-            changeWindow = curses.newwin(5, 40, 5, 50)
-            changeWindow.border()
-            changeWindow.addstr(0,0, "What is the file path?", curses.A_REVERSE)
-        except CLI_Audio_File_Exception:
-            print("There was no file path that linked up correctly")
-            pass
-        
+        changeWindow = curses.newwin(5, 40, 5, 50)
+        changeWindow.border()
+        changeWindow.addstr(0,0, "What is the file path?", curses.A_REVERSE)
         self.stdscr.refresh()
         curses.echo()
         path = changeWindow.getstr(1,1, 30)
         curses.noecho()
-        del changeWindow
-        self.stdscr.touchwin()
-        self.stdscr.refresh()
-        self.player.stop()
-        self.player.play(path.decode(encoding="utf-8"))
+
+        #check the input file is it on the exist, then do the following commands
+        if (os.path.isfile(path.decode(encoding="utf-8"))):
+            del changeWindow
+            self.stdscr.touchwin()
+            self.stdscr.refresh()
+            self.player.stop()
+            self.player.play(path.decode(encoding="utf-8"))
+
+	#if the file path does not exist raise the file exception
+        else:
+            del changeWindow
+            self.stdscr.touchwin()
+            self.stdscr.refresh()
+            raise File_Exception
         
+
 
     def quit(self):
         self.player.stop()
