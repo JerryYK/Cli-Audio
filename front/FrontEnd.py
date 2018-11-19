@@ -217,7 +217,8 @@ class FrontEnd:
             del changeWindow
             self.stdscr.touchwin()
             self.stdscr.refresh()
-            self.player.stop()
+            if self.player.paused is False:
+                self.player.stop()
             self.player.play(path.decode(encoding="utf-8"))
 
 	#if the file path does not exist raise the file exception
