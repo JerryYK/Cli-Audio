@@ -1,26 +1,22 @@
 import curses
 import curses.textpad
 import sys
-<<<<<<< HEAD
 import os
 
 '''
  Enhance the cli-audio's feature
  Author: Runquan Ye Alec Allain
 '''
-=======
+
 from exception.CLI_Audio_Exception import *
->>>>>>> 2fe3c4b3dab7a00633b3db7e1be2b5ead61f847e
 
 class FrontEnd:
 
     def __init__(self, player):
-<<<<<<< HEAD
         self.player = player
       	#self.player.play(sys.argv[1])
         curses.wrapper(self.menu)
         self.playList = []
-=======
         """ This checks for a window size error"""
         try:
             self.player = player
@@ -30,7 +26,7 @@ class FrontEnd:
             print("Window size is at a really small size")
             print()
             pass
->>>>>>> 2fe3c4b3dab7a00633b3db7e1be2b5ead61f847e
+
 
     def menu(self, args):
         #getiing the height and width from the window itself
@@ -61,7 +57,6 @@ class FrontEnd:
                 self.updateSong()
                 self.stdscr.touchwin()
                 self.stdscr.refresh()
-<<<<<<< HEAD
             elif c == ord('l'):
                 self.createSongList()
 
@@ -109,9 +104,7 @@ class FrontEnd:
         self.player.stop()
         self.player.play(path.decode(encoding="utf-8"))
 
-=======
-    
->>>>>>> 2fe3c4b3dab7a00633b3db7e1be2b5ead61f847e
+
     def updateSong(self):
         self.stdscr.addstr(15,10, "                                        ")
         self.stdscr.addstr(15,10, "Now playing: " + self.player.getCurrentSong())
